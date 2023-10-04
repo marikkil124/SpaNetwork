@@ -11,7 +11,8 @@ class Post extends Model
     use HasFactory;
 
     protected $guarded = false;
-    protected $with = ['image','likesCount'];
+    protected $withCount=['comments'];
+    protected $with = ['image','likesCount','repostedPost','PostByUser'];
 
     public function image()
     {
@@ -30,6 +31,29 @@ class Post extends Model
         return $this->belongsToMany(User::class,'liked_posts','post_id','user_id');
     }
 
+    public function repostedPost()
+    {
+        return $this->belongsTo(Post::class, 'reposted_id', 'id');
+    }
 
+    public function comments()
+    {
+       return $this->hasMany(Comment::class, 'post_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsToMany(User::class, 'comments', 'post_id','user_id');
+    }
+
+    public function repostedByPost()
+    {
+        return $this->hasMany(Post::class, 'reposted_id', 'id');
+    }
+
+    public function PostByUser()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }
 

@@ -20,6 +20,7 @@ class UserResource extends JsonResource
             'email'=>$this->email,
             'is_followed'=>$this->is_followed??false,
 
+
         ];
     }
 }

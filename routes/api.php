@@ -22,9 +22,15 @@ Route::middleware('auth:sanctum')->group( function () {
    Route::post('/post_images',[\App\Http\Controllers\PostImageController::class,'store']);
    Route::post('/posts',[\App\Http\Controllers\PostController::class,'store']);
    Route::get('/posts',[\App\Http\Controllers\PostController::class,'index']);
-    Route::get('/posts/{post}/liked_posts',[\App\Http\Controllers\PostController::class,'toggleLike']);
+    Route::post('/posts/{post}/liked_posts',[\App\Http\Controllers\PostController::class,'toggleLike']);
+    Route::post('/posts/{post}/repost',[\App\Http\Controllers\PostController::class,'repost']);
+    Route::post('/posts/{post}/comment',[\App\Http\Controllers\PostController::class,'comment']);
+    Route::get('/posts/{post}/comment',[\App\Http\Controllers\PostController::class,'getComments']);
     Route::get('/users',[\App\Http\Controllers\UserController::class,'index']);
     Route::get('/users/{user}/posts',[\App\Http\Controllers\UserController::class,'posts']);
-    Route::get('/users/{user}/toggle_follow',[\App\Http\Controllers\UserController::class,'toggleFollow']);
+
+    Route::post('/user/stats',[\App\Http\Controllers\UserController::class,'stat']);
+
+    Route::post('/users/{user}/toggle_follow',[\App\Http\Controllers\UserController::class,'toggleFollow']);
     Route::get('/users/following_posts',[\App\Http\Controllers\UserController::class,'followingPost']);
 });

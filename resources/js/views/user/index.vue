@@ -25,7 +25,7 @@ function getUsers() {
 
 
 function toggleFollow(user) {
-    axios.get(`/api/users/${user.id}/toggle_follow`).then(res => {
+    axios.post(`/api/users/${user.id}/toggle_follow`).then(res => {
         data.value.is_followed = res.data.is_followed
         getUsers()
         console.log(res)
@@ -43,9 +43,8 @@ getUsers()
         <div v-if="users" class="  border-b-2 border-t-gray-300 mb-2 pb-1 items-center">
             <div v-for="user in users">
                 <router-link :to="{path:`/user/${user.id}`}">
-                    <p> Id user: {{ user.id }}</p>
-                    <p> User Name: {{ user.name }}</p>
-                    <p> User Email: {{ user.email }}</p>
+                    <p> Имя пользователя: {{ user.name }}</p>
+                    <p> email пользователя: {{ user.email }}</p>
                 </router-link>
                 <a :class="['  text-center border-1 rounded-3xl px-2 py-0.5 hover:bg-white hover:text-black border border-gray-300 ml-72' ,user.is_followed ? 'text-black bg-white-500  ' : 'bg-blue-500 text-white']"
                    href="#"    type="submit" @click.prevent="toggleFollow(user)">

@@ -4,7 +4,7 @@
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-import axios from 'axios';
+import axios, {Axios, AxiosError} from 'axios';
 import router from './router'
 window.axios = axios;
 
@@ -21,8 +21,12 @@ axios.interceptors.response.use({},error=>{
             router.push('/user/login')
         }
 
+
     }
+    else  return Promise.reject(error);
 })
+
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
