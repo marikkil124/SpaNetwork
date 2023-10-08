@@ -1,11 +1,15 @@
 <script setup>
 import axios from "axios";
-import {ref, resolveDirective} from "vue";
-import {useRoute} from "vue-router";
+import {onBeforeMount, onBeforeUpdate, onMounted, onUpdated, ref, resolveDirective, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
 import Repost from "@/Components/repost.vue";
 import Comment from "@/Components/comment.vue";
+import router from "@/router/index.js";
+import * as path from "path";
+
 
 const route = useRoute()
+const Router = useRouter();
 
 let data = ref({
     title: '',
@@ -22,6 +26,11 @@ const Comments = ref()
 let RepostCount = ref(0)
 let CommentCount = ref(0)
 const CommentVisible = ref(false)
+const deletePostId = ref(null)
+let timer = ref(10)
+let timerId = ref(10)
+const routeId = ref(props.post.user.id)
+
 
 function repostVisible() {
     if (route.path === '/user/personal')
@@ -46,6 +55,37 @@ function getComments(post) {
             console.log(res)
         })
     }
+}
+
+function deletePost(post) {
+    deletePostId.value = post.id
+
+    if(deletePostId)
+    timerId = setInterval(() => {
+        timer.value--
+        console.log(timer.value)
+        if (timer.value <= 0) {
+            timer.value = 0
+            console.log(timer.value)
+            axios.delete(`/api/posts/${post.id}/post`).then(res => {
+                console.log('постудален')
+            })
+            clearInterval(timerId)
+        }
+    }, 1000);
+
+
+
+}
+
+
+function restorePost() {
+    deletePostId.value = null
+    setTimeout(() => {
+        clearInterval(timerId);
+        ;
+    }, 0);
+
 
 }
 
@@ -53,11 +93,15 @@ function getComments(post) {
 </script>
 
 <template>
-    <div class="mb-3">
+    <div v-if="deletePostId!==null && timer!=0" class="bg-gray-100 box-content  w-72 ">
+        Пост будет удален через 10 сек: {{ timer }}
+        <p class="text-sm text-teal-500 text-right 2 mt-2 cursor-pointer "
+           @click="restorePost">Восстановить</p>
+    </div>
 
-
+    <div class="mb-3" v-if="(deletePostId===null)">
         <h1 class="text-xl text-center  "> {{ props.post.title }}</h1>
-        <router-link :to="`/user/${props.post.user.id}`" class="text-lg text-sky-500 text-sm">{{
+        <router-link :to="{name:'user.show',params:{id:props.post.user.id}}" class="text-lg text-sky-500 text-sm">{{
                 props.post.user.name
             }}
         </router-link>
@@ -74,16 +118,17 @@ function getComments(post) {
             <router-link :to="`/user/${RepostedPost.user.id}`" class="text-lg text-sky-500 text-sm">
                 {{ RepostedPost.user.name }}
             </router-link>
-
         </div>
-
         <div v-if="RepostedPost" class="bg-gray-100 box-content  w-72 border-l-4 border-l-sky-300 ml-10">
             <h1 class="text-lm">{{ RepostedPost.title }}</h1>
             <img :src="RepostedPost.image_url" :alt="RepostedPost.title" width="300" height="300">
             <p class="break-words">{{ RepostedPost.content }}</p>
 
         </div>
-
+        <div>
+            <p class="text-sm text-red-500 text-right 2 mt-2 cursor-pointer" @click="deletePost(props.post)">
+                Удалить пост</p>
+        </div>
 
         <div class="flex justify-between items-center mt-3">
             <div class="flex">
@@ -121,19 +166,26 @@ function getComments(post) {
                     </svg>
                     <p class="text-sm text-gray-500">{{ props.post.comments_count + CommentCount }}</p>
                 </div>
+
             </div>
 
             <p class="text-sm text-right 2 mt-2">{{ props.post.data }}</p>
 
+
         </div>
+        <div>
+
+        </div>
+
         <repost :post="props.post" :data="data" :RepostVisible="RepostVisible" @repost="()=>RepostCount++"></repost>
 
         <comment :post="props.post" :Comments="Comments" :CommentVisible="CommentVisible"
-                 @CommentCount="()=>{getComments(props.post) ,CommentCount++}"></comment>
+                 @CommentDelete="()=>{getComments(props.post)}"
+                 @CommentCount="()=>{getComments(props.post),CommentCount++}"></comment>
 
-        <router-view></router-view>
 
     </div>
+    <router-view></router-view>
 </template>
 
 <style scoped>

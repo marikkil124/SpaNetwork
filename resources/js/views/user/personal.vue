@@ -21,9 +21,7 @@ function selectFile() {
 
 function getPosts() {
     axios.get('/api/posts').then(res => {
-
         posts.value = res.data.data
-
     })
 }
 

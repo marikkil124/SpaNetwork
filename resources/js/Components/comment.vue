@@ -4,16 +4,13 @@ import {ref} from "vue";
 
 const props = defineProps(['post', 'CommentVisible', 'Comments']);
 const comment_body = ref()
-const emit = defineEmits(['CommentCount'])
+const emit = defineEmits(['CommentCount','CommentDelete'])
 const refToCommentBody = ref(null)
 const parentComment=ref(null)
 function addComment(post) {
    let parent_id = parentComment.value!=null ? parentComment.value.id : null;
-
     axios.post(`/api/posts/${post.id}/comment`, {body: comment_body.value, post_id: post.id,parent_id:parent_id}).then(res => {
-
         comment_body.value = ''
-
         emit('CommentCount')
     })
 }
@@ -22,6 +19,15 @@ function addAnswer(comment) {
     refToCommentBody.value.scrollIntoView({ behavior: "smooth" })
     parentComment.value=comment
     console.log(props.Comments)
+}
+function deleteComment(comment)
+{
+    console.log(comment.id)
+    axios.delete(`/api/posts/${comment.id}`).then(res=>{
+        emit('CommentDelete')
+
+    })
+
 }
 
 </script>
@@ -60,6 +66,7 @@ function addAnswer(comment) {
                 </div>
 
                 <p class="cursor-pointer text-sm text-right text-sky-500" @click=addAnswer(comment) > ответить</p>
+                <p class="cursor-pointer text-sm text-right text-red-500" v-if="comment.user.id===comment.auth_user_id" @click=deleteComment(comment) > удалить</p>
                 <p class=" text-sm text-right"> {{ comment.date }}</p>
 
             </div>

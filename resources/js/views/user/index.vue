@@ -42,7 +42,7 @@ getUsers()
     <div class=" flex justify-between  box-content mx-auto w-72 mt-4 p-4 ">
         <div v-if="users" class="  border-b-2 border-t-gray-300 mb-2 pb-1 items-center">
             <div v-for="user in users">
-                <router-link :to="{path:`/user/${user.id}`}">
+                <router-link :to="`/user/${user.id}`">
                     <p> Имя пользователя: {{ user.name }}</p>
                     <p> email пользователя: {{ user.email }}</p>
                 </router-link>

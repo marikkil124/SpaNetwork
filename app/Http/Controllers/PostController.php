@@ -33,7 +33,6 @@ class PostController extends Controller
                 $post->is_liked = true;
 
 
-
         }
 
         // return response($posts);
@@ -115,6 +114,36 @@ class PostController extends Controller
 
     }
 
+    public function deleteComment(Comment $comment)
+    {
+        $comment->delete();
+        return response($comment);
+    }
+
+    public function deletePost(Post $post)
+    {
+
+        try {
+            DB::beginTransaction();
+            $comments = Comment::where('post_id', $post->id)->get();
+            //удаление комментария связанное с постом
+            foreach ($comments as $comment) {
+                $comment->delete();
+            }
+            //удаление изображения свзанное с постом
+            $images = PostImage::where('post_id', $post->id)->get();
+
+            foreach ($images as $image) {
+                if (isset($image))
+                    $image->delete();
+            }
+            $post->delete();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()]);
+        }
 
 
+    }
 }

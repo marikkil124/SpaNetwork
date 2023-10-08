@@ -25,6 +25,7 @@ class PostCommentResource extends JsonResource
             'comment'=>$this->body,
             'parent_id'=>$this->parent_id,
             'date'=>$this->date,
+            'auth_user_id'=>auth()->id(),
 
 
 

@@ -1,18 +1,20 @@
 <script setup>
 import {ref} from "vue";
 
-const props=defineProps(['stat'])
+const props = defineProps(['stat'])
 
 
 </script>
 
 <template>
     <div class="flex  justify-center mb-3">
-        <div>
-            <p>Подписчики: {{props.stat.subscribes}}</p>
-            <p>Подписки: {{props.stat.followers}}</p>
-            <p>Лайки: {{props.stat.likes}}</p>
-            <p>Постов: {{props.stat.posts}}</p>
+        <div class="grid grid-cols-4 gap-4 ">
+
+            <div class="  ">Подписчики: {{ props.stat.subscribes }}</div>
+            <div class="">Подписки: {{ props.stat.followers}}</div>
+            <div class="">Лайки: {{ props.stat.likes}}</div>
+            <div>Постов: {{ props.stat.posts }}</div>
+
         </div>
     </div>
 </template>

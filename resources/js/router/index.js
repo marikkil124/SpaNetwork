@@ -3,7 +3,7 @@ import config from "tailwindcss/defaultConfig.js";
 
 const router = createRouter({
     // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createWebHistory(),
     routes: [
 
         {
